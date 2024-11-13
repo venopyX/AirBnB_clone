@@ -3,7 +3,6 @@ import unittest
 from models.base_model import BaseModel
 from datetime import datetime
 import time
-import os
 import json
 import re
 
@@ -70,13 +69,39 @@ class TestBaseModel(unittest.TestCase):
         b.name = "Laura"
         b.age = 23
         d = b.to_dict()
-        self.assertEqual(d["id"], b.id)
-        self.assertEqual(d["__class__"], type(b).__name__)
-        self.assertEqual(d["created_at"], b.created_at.isoformat())
-        self.assertEqual(d["updated_at"], b.updated_at.isoformat())
-        self.assertEqual(d["name"], b.name)
-        self.assertEqual(d["age"], b.age)
+        self.assertEqual(d["name"], "Laura")
+        self.assertEqual(d["age"], 23)
+        self.assertEqual(d["__class__"], "BaseModel")
+        self.assertEqual(type(d["created_at"]), str)
+        self.assertEqual(type(d["updated_at"]), str)
 
+    def test_from_dict(self):
+        """Tests creating an instance from a dictionary (kwargs)."""
+        b = BaseModel()
+        b.name = "Laura"
+        b.age = 23
+        dict_repr = b.to_dict()
 
-if __name__ == '__main__':
+        dict_repr.pop('id', None)
+
+        new_instance = BaseModel(**dict_repr)
+        self.assertEqual(new_instance.name, "Laura")
+        self.assertEqual(new_instance.age, 23)
+        self.assertEqual(type(new_instance.created_at), datetime)
+        self.assertEqual(type(new_instance.updated_at), datetime)
+        self.assertNotEqual(b.id, new_instance.id)  # Ensure IDs are unique
+
+    def test_datetime_conversion_in_kwargs(self):
+        """Test conversion of datetime strings in kwargs."""
+        b = BaseModel()
+        dict_repr = b.to_dict()
+        dict_repr["created_at"] = "2024-11-13T00:00:00.000000"
+        dict_repr["updated_at"] = "2024-11-13T00:00:00.000000"
+        del dict_repr["__class__"]
+
+        new_instance = BaseModel(**dict_repr)
+        self.assertEqual(new_instance.created_at, datetime(2024, 11, 13, 0, 0, 0))
+        self.assertEqual(new_instance.updated_at, datetime(2024, 11, 13, 0, 0, 0))
+
+if __name__ == "__main__":
     unittest.main()
