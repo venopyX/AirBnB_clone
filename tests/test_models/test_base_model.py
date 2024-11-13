@@ -100,8 +100,13 @@ class TestBaseModel(unittest.TestCase):
         del dict_repr["__class__"]
 
         new_instance = BaseModel(**dict_repr)
-        self.assertEqual(new_instance.created_at, datetime(2024, 11, 13, 0, 0, 0))
-        self.assertEqual(new_instance.updated_at, datetime(2024, 11, 13, 0, 0, 0))
+        self.assertEqual(
+            new_instance.created_at, datetime(
+                2024, 11, 13, 0, 0, 0))
+        self.assertEqual(
+            new_instance.updated_at, datetime(
+                2024, 11, 13, 0, 0, 0))
+
 
 if __name__ == "__main__":
     unittest.main()

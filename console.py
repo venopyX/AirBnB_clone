@@ -15,7 +15,7 @@ class HBNBCommand(cmd.Cmd):
 
     def default(self, line):
         """
-        Handles unrecognized commands by attempting to match class.method() syntax.
+        Handles unrecognized commands by matching class.method() syntax.
 
         Args:
             line (str): The input command line.
@@ -209,37 +209,50 @@ class HBNBCommand(cmd.Cmd):
 
         rex = r'^(\S+)(?:\s(\S+)(?:\s(\S+)(?:\s((?:"[^"]*")|(?:(\S)+)))?)?)?'
         match = re.search(rex, line)
-        classname, uid, attribute, value = match.groups() if match else (None, None, None, None)
         if not match:
             print("** class name missing **")
+            return
+
+        classname, uid, attribute, value = match.groups()
+        if not classname:
+            print("** class name missing **")
+            return
         elif classname not in storage.classes():
             print("** class doesn't exist **")
+            return
         elif not uid:
             print("** instance id missing **")
+            return
+
+        key = "{}.{}".format(classname, uid)
+        if key not in storage.all():
+            print("** no instance found **")
+            return
+        elif not attribute:
+            print("** attribute name missing **")
+            return
+        elif not value:
+            print("** value missing **")
+            return
+
+        cast = None
+        if value.startswith('"') and value.endswith('"'):
+            value = value[1:-1]
         else:
-            key = "{}.{}".format(classname, uid)
-            if key not in storage.all():
-                print("** no instance found **")
-            elif not attribute:
-                print("** attribute name missing **")
-            elif not value:
-                print("** value missing **")
-            else:
-                cast = None
-                if not re.search('^".*"$', value):
-                    cast = float if '.' in value else int
-                else:
-                    value = value.replace('"', '')
-                attributes = storage.attributes()[classname]
-                if attribute in attributes:
-                    value = attributes[attribute](value)
-                elif cast:
-                    try:
-                        value = cast(value)
-                    except ValueError:
-                        pass
-                setattr(storage.all()[key], attribute, value)
-                storage.all()[key].save()
+            try:
+                value = int(value)
+            except ValueError:
+                try:
+                    value = float(value)
+                except ValueError:
+                    pass
+
+        attributes = storage.attributes()[classname]
+        if attribute in attributes:
+            value = attributes[attribute](value)
+
+        setattr(storage.all()[key], attribute, value)
+        storage.all()[key].save()
 
 
 if __name__ == '__main__':

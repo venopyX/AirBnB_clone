@@ -44,72 +44,70 @@ class TestHBNBCommand(unittest.TestCase):
         if os.path.isfile(FileStorage._FileStorage__file_path):
             os.remove(FileStorage._FileStorage__file_path)
 
-    def test_help(self):
-        """Tests the help command."""
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("help")
-        s = """
-Documented commands (type help <topic>):
-========================================
-EOF  all  count  create  destroy  help  quit  show  update
-
-"""
-        self.assertEqual(s, f.getvalue())
-
     def test_help_EOF(self):
         """Tests the help EOF command."""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help EOF")
-        s = 'Handles End Of File character.\n        \n'
-        self.assertEqual(s, f.getvalue())
-
-    def test_help_quit(self):
-        """Tests the help quit command."""
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("help quit")
-        s = 'Exits the program.\n        \n'
-        self.assertEqual(s, f.getvalue())
-
-    def test_help_create(self):
-        """Tests the help create command."""
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("help create")
-        s = 'Creates an instance.\n        \n'
-        self.assertEqual(s, f.getvalue())
-
-    def test_help_show(self):
-        """Tests the help show command."""
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("help show")
-        s = 'Prints the string representation of an instance.\n        \n'
-        self.assertEqual(s, f.getvalue())
-
-    def test_help_destroy(self):
-        """Tests the help destroy command."""
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("help destroy")
-        s = 'Deletes an instance based on the class name and id.\n        \n'
+        s = 'Exits the program on EOF signal.\n'
         self.assertEqual(s, f.getvalue())
 
     def test_help_all(self):
         """Tests the help all command."""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help all")
-        s = 'Prints all string representation of all instances.\n        \n'
+        s = ('\n        Prints string representations of all instances of a '
+             'class.\n\n        Args:\n            line (str): The class name '
+             '(optional).\n')
         self.assertEqual(s, f.getvalue())
 
     def test_help_count(self):
         """Tests the help count command."""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help count")
-        s = 'Counts the instances of a class.\n        \n'
+        s = ('\n        Counts the number of instances of a class.\n\n        '
+             'Args:\n            line (str): The class name.\n')
+        self.assertEqual(s, f.getvalue())
+
+    def test_help_create(self):
+        """Tests the help create command."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("help create")
+        s = ('\n        Creates a new instance of a class and prints its ID.\n'
+             '\n        Args:\n            line (str): The class name.\n')
+        self.assertEqual(s, f.getvalue())
+
+    def test_help_destroy(self):
+        """Tests the help destroy command."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("help destroy")
+        s = ('\n        Deletes an instance based on the class name and ID.\n'
+             '\n        Args:\n            line (str): The class name and '
+             'instance ID.\n')
+        self.assertEqual(s, f.getvalue())
+
+    def test_help_quit(self):
+        """Tests the help quit command."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("help quit")
+        s = 'Exits the program.\n'
+        self.assertEqual(s, f.getvalue())
+
+    def test_help_show(self):
+        """Tests the help show command."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("help show")
+        s = ('\n        Prints the string representation of an instance.\n'
+             '\n        Args:\n            line (str): The class name and '
+             'instance ID.\n')
         self.assertEqual(s, f.getvalue())
 
     def test_help_update(self):
         """Tests the help update command."""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help update")
-        s = 'Updates an instance by adding or updating attribute.\n        \n'
+        s = ('\n        Updates an instance with a new attribute or value.\n'
+             '\n        Args:\n            line (str): The class name, '
+             'instance ID, attribute, and value.\n')
         self.assertEqual(s, f.getvalue())
 
     def test_do_quit(self):
@@ -539,16 +537,29 @@ EOF  all  count  create  destroy  help  quit  show  update
             for attr, value in self.test_random_attributes.items():
                 if type(value) is not str:
                     continue
-                quotes = (type(value) == str)
+                quotes = isinstance(value, str)
                 self.help_test_update(classname, uid, attr, value, quotes, False)
                 self.help_test_update(classname, uid, attr, value, quotes, True)
+
             if classname == "BaseModel":
                 continue
             for attr, attr_type in self.attributes()[classname].items():
                 if attr_type not in (str, int, float):
                     continue
-                self.help_test_update(classname, uid, attr, self.attribute_values[attr_type], True, False)
-                self.help_test_update(classname, uid, attr, self.attribute_values[attr_type], False, True)
+                self.help_test_update(
+                    classname,
+                    uid,
+                    attr,
+                    self.attribute_values[attr_type],
+                    True,
+                    False)
+                self.help_test_update(
+                    classname,
+                    uid,
+                    attr,
+                    self.attribute_values[attr_type],
+                    False,
+                    True)
 
     def help_test_update(self, classname, uid, attr, val, quotes, func):
         """Tests update command."""
@@ -656,13 +667,15 @@ EOF  all  count  create  destroy  help  quit  show  update
         from models.place import Place
         from models.review import Review
 
-        classes = {"BaseModel": BaseModel,
-                   "User": User,
-                   "State": State,
-                   "City": City,
-                   "Amenity": Amenity,
-                   "Place": Place,
-                   "Review": Review}
+        classes = {
+            "BaseModel": BaseModel,
+            "User": User,
+            "State": State,
+            "City": City,
+            "Amenity": Amenity,
+            "Place": Place,
+            "Review": Review
+        }
         return classes
 
     def attributes(self):
