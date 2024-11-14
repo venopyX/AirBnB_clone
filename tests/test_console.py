@@ -113,13 +113,13 @@ class TestHBNBCommand(unittest.TestCase):
     def test_do_quit(self):
         """Tests quit command."""
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("quit")
+            self.assertTrue(HBNBCommand().onecmd("quit"))
         msg = f.getvalue()
         self.assertTrue(len(msg) == 0)
         self.assertEqual("", msg)
 
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("quit garbage")
+            self.assertTrue(HBNBCommand().onecmd("quit garbage"))
         msg = f.getvalue()
         self.assertTrue(len(msg) == 0)
         self.assertEqual("", msg)
@@ -127,13 +127,13 @@ class TestHBNBCommand(unittest.TestCase):
     def test_do_EOF(self):
         """Tests EOF command."""
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("EOF")
+            self.assertTrue(HBNBCommand().onecmd("EOF"))
         msg = f.getvalue()
         self.assertTrue(len(msg) == 1)
         self.assertEqual("\n", msg)
 
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("EOF garbage")
+            self.assertTrue(HBNBCommand().onecmd("EOF garbage"))
         msg = f.getvalue()
         self.assertTrue(len(msg) == 1)
         self.assertEqual("\n", msg)

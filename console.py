@@ -198,61 +198,73 @@ class HBNBCommand(cmd.Cmd):
 
     def do_update(self, line):
         """
-        Updates an instance with a new attribute or value.
-
+        Updates an instance based on the class name and id by adding or updating an attribute.
+        
         Args:
-            line (str): The class name, instance ID, attribute, and value.
+            line (str): Input string in the format <class name> <id> <attribute name> "<attribute value>".
+        
+        Error Messages:
+            ** class name missing **       : If the class name is missing
+            ** class doesn't exist **      : If the class doesn't exist
+            ** instance id missing **      : If the id is missing
+            ** no instance found **        : If the instance with the given id does not exist
+            ** attribute name missing **   : If the attribute name is missing
+            ** value missing **            : If the value for the attribute is missing
         """
         if not line:
             print("** class name missing **")
             return
 
-        rex = r'^(\S+)(?:\s(\S+)(?:\s(\S+)(?:\s((?:"[^"]*")|(?:(\S)+)))?)?)?'
-        match = re.search(rex, line)
-        if not match:
+        args = line.split()
+        if len(args) < 1:
             print("** class name missing **")
             return
 
-        classname, uid, attribute, value = match.groups()
-        if not classname:
-            print("** class name missing **")
-            return
-        elif classname not in storage.classes():
+        classname = args[0]
+        if classname not in storage.classes():
             print("** class doesn't exist **")
             return
-        elif not uid:
+
+        if len(args) < 2:
             print("** instance id missing **")
             return
 
-        key = "{}.{}".format(classname, uid)
+        uid = args[1]
+        key = f"{classname}.{uid}"
         if key not in storage.all():
             print("** no instance found **")
             return
-        elif not attribute:
+
+        if len(args) < 3:
             print("** attribute name missing **")
             return
-        elif not value:
+
+        attribute = args[2]
+        if len(args) < 4:
             print("** value missing **")
             return
 
-        cast = None
+        value = args[3]
         if value.startswith('"') and value.endswith('"'):
             value = value[1:-1]
-        else:
-            try:
+
+        instance = storage.all()[key]
+        if attribute in {"id", "created_at", "updated_at"}:
+            return
+
+        attr_type = type(getattr(instance, attribute, str))
+        try:
+            if attr_type == int:
                 value = int(value)
-            except ValueError:
-                try:
-                    value = float(value)
-                except ValueError:
-                    pass
+            elif attr_type == float:
+                value = float(value)
+            else:
+                value = str(value)
+        except ValueError:
+            value = str(value)
 
-        attributes = storage.attributes()[classname]
-        if attribute in attributes:
-            value = attributes[attribute](value)
-
-        setattr(storage.all()[key], attribute, value)
-        storage.all()[key].save()
+        setattr(instance, attribute, value)
+        instance.save()
 
 
 if __name__ == '__main__':
