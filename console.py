@@ -198,10 +198,12 @@ class HBNBCommand(cmd.Cmd):
 
     def do_update(self, line):
         """
-        Updates an instance based on the class name and id by adding or updating an attribute.
-        
+        Updates an instance based on the class name
+        and id by adding or updating an attribute.
+
         Args:
-            line (str): Input string in the format <class name> <id> <attribute name> "<attribute value>".
+            line (str): Input string in the
+            format <class name> <id> <attribute name> "<attribute value>".
         """
         if not line:
             print("** class name missing **")

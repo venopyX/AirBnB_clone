@@ -11,6 +11,7 @@ from io import StringIO
 import re
 import os
 
+
 class TestHBNBCommand(unittest.TestCase):
     """Tests HBNBCommand console."""
 
@@ -705,6 +706,7 @@ class TestHBNBCommand(unittest.TestCase):
                       "text": str}
         }
         return attributes
+
 
 if __name__ == "__main__":
     unittest.main()
