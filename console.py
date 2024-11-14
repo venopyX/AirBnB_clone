@@ -202,14 +202,6 @@ class HBNBCommand(cmd.Cmd):
         
         Args:
             line (str): Input string in the format <class name> <id> <attribute name> "<attribute value>".
-        
-        Error Messages:
-            ** class name missing **       : If the class name is missing
-            ** class doesn't exist **      : If the class doesn't exist
-            ** instance id missing **      : If the id is missing
-            ** no instance found **        : If the instance with the given id does not exist
-            ** attribute name missing **   : If the attribute name is missing
-            ** value missing **            : If the value for the attribute is missing
         """
         if not line:
             print("** class name missing **")

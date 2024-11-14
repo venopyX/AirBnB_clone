@@ -48,67 +48,57 @@ class TestHBNBCommand(unittest.TestCase):
         """Tests the help EOF command."""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help EOF")
-        s = 'Exits the program on EOF signal.\n'
-        self.assertEqual(s, f.getvalue())
+        expected_output = HBNBCommand().do_EOF.__doc__.strip()
+        self.assertEqual(expected_output, f.getvalue().strip())
 
     def test_help_all(self):
         """Tests the help all command."""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help all")
-        s = ('\n        Prints string representations of all instances of a '
-             'class.\n\n        Args:\n            line (str): The class name '
-             '(optional).\n')
-        self.assertEqual(s, f.getvalue())
+        expected_output = HBNBCommand().do_all.__doc__.strip()
+        self.assertEqual(expected_output, f.getvalue().strip())
 
     def test_help_count(self):
         """Tests the help count command."""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help count")
-        s = ('\n        Counts the number of instances of a class.\n\n        '
-             'Args:\n            line (str): The class name.\n')
-        self.assertEqual(s, f.getvalue())
+        expected_output = HBNBCommand().do_count.__doc__.strip()
+        self.assertEqual(expected_output, f.getvalue().strip())
 
     def test_help_create(self):
         """Tests the help create command."""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help create")
-        s = ('\n        Creates a new instance of a class and prints its ID.\n'
-             '\n        Args:\n            line (str): The class name.\n')
-        self.assertEqual(s, f.getvalue())
+        expected_output = HBNBCommand().do_create.__doc__.strip()
+        self.assertEqual(expected_output, f.getvalue().strip())
 
     def test_help_destroy(self):
         """Tests the help destroy command."""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help destroy")
-        s = ('\n        Deletes an instance based on the class name and ID.\n'
-             '\n        Args:\n            line (str): The class name and '
-             'instance ID.\n')
-        self.assertEqual(s, f.getvalue())
+        expected_output = HBNBCommand().do_destroy.__doc__.strip()
+        self.assertEqual(expected_output, f.getvalue().strip())
 
     def test_help_quit(self):
         """Tests the help quit command."""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help quit")
-        s = 'Exits the program.\n'
-        self.assertEqual(s, f.getvalue())
+        expected_output = HBNBCommand().do_quit.__doc__.strip()
+        self.assertEqual(expected_output, f.getvalue().strip())
 
     def test_help_show(self):
         """Tests the help show command."""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help show")
-        s = ('\n        Prints the string representation of an instance.\n'
-             '\n        Args:\n            line (str): The class name and '
-             'instance ID.\n')
-        self.assertEqual(s, f.getvalue())
+        expected_output = HBNBCommand().do_show.__doc__.strip()
+        self.assertEqual(expected_output, f.getvalue().strip())
 
     def test_help_update(self):
         """Tests the help update command."""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help update")
-        s = ('\n        Updates an instance with a new attribute or value.\n'
-             '\n        Args:\n            line (str): The class name, '
-             'instance ID, attribute, and value.\n')
-        self.assertEqual(s, f.getvalue())
+        expected_output = HBNBCommand().do_update.__doc__.strip()
+        self.assertEqual(expected_output, f.getvalue().strip())
 
     def test_do_quit(self):
         """Tests quit command."""
